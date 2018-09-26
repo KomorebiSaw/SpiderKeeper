@@ -12,6 +12,7 @@ from flask import render_template
 from flask import session
 from flask_restful_swagger import swagger
 from werkzeug.utils import secure_filename
+from six.moves.urllib.parse import urlparse
 
 from SpiderKeeper.app import db, api, agent, app
 from SpiderKeeper.app.spider.model import JobInstance, Project, JobExecution, SpiderInstance, JobRunType
@@ -418,6 +419,15 @@ class JobExecutionDetailCtrl(flask_restful.Resource):
             return True
 
 
+class GetServerList(flask_restful.Resource):
+    @swagger.operation(
+        summary='get server list',
+        parameters=[]
+    )
+    def get(self):
+        return agent.servers
+
+
 api.add_resource(ProjectCtrl, "/api/projects")
 api.add_resource(SpiderCtrl, "/api/projects/<project_id>/spiders")
 api.add_resource(SpiderDetailCtrl, "/api/projects/<project_id>/spiders/<spider_id>")
@@ -425,7 +435,7 @@ api.add_resource(JobCtrl, "/api/projects/<project_id>/jobs")
 api.add_resource(JobDetailCtrl, "/api/projects/<project_id>/jobs/<job_id>")
 api.add_resource(JobExecutionCtrl, "/api/projects/<project_id>/jobexecs")
 api.add_resource(JobExecutionDetailCtrl, "/api/projects/<project_id>/jobexecs/<job_exec_id>")
-
+api.add_resource(GetServerList, "/api/projects/get_server_list")
 '''
 ========= Router =========
 '''
@@ -664,3 +674,17 @@ def service_stats(project_id):
     project = Project.find_project_by_id(project_id)
     run_stats = JobExecution.list_run_stats_by_hours(project_id)
     return render_template("server_stats.html", run_stats=run_stats)
+
+
+'''
+========= Jinjia Filter =========
+'''
+
+
+@app.template_filter('get_progress_id')
+def get_progress_id(server):
+    url = urlparse(server)
+    if url:
+        return 'progress-bar-{host}-{port}'.format(host=url.hostname, port=url.port)
+    else:
+        return server
