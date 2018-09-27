@@ -30,11 +30,11 @@
         $.ajax({
             type: 'GET',
             url: 'http://' + window.location.host + '/api/projects/get_server_list',
-            async: false,
+            async: true,
             success: function (servers) {
-                for (index in servers) {
-                    var parser = document.createElement('a');
-                    parser.href = servers[index];
+                for (let server of servers) {
+                    let parser = document.createElement('a');
+                    parser.href = server;
                     !(function(parser){
                         $.ajax({
                             type: 'GET',
@@ -43,9 +43,9 @@
                             async: true,
                             timeout: 3000,
                         }).always(function (jqXHR) {
-                            var progressColorClass = "progress-bar-warning";
-                            var port = parser.port ? parser.port : 'None';
-                            var progress_obj = document.getElementById("progress-bar-" + parser.hostname + "-" + port);
+                            let progressColorClass = "progress-bar-warning";
+                            let port = parser.port ? parser.port : 'None';
+                            let progress_obj = document.getElementById("progress-bar-" + parser.hostname + "-" + port);
                             if (jqXHR && progress_obj){
                                 progress_obj.classList.remove('progress-bar-striped','progress-bar-warning');
                                 if (jqXHR.status==200){
