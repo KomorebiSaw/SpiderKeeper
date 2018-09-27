@@ -30,7 +30,6 @@
         $.ajax({
             type: 'GET',
             url: 'http://' + window.location.host + '/api/projects/get_server_list',
-            dataType: 'json',
             async: false,
             success: function (servers) {
                 for (index in servers) {
@@ -40,25 +39,25 @@
                         $.ajax({
                             type: 'GET',
                             url: parser.href,
-                            dataType: 'json',
+                            dataType: 'jsonp',
                             async: true,
                             timeout: 3000,
-                        }).done(function (data) {
-                            var progress_obj = $("#progress-bar-" + parser.hostname + '-' + parser.port);
-                            progress_obj.removeClass('progress-bar-striped');
-                            progress_obj.removeClass('progress-bar-warning');
-                            progress_obj.addClass("progress-bar-success")
-                        }).fail(function (jqXHR, textStatus, errorThrown) {
-                            var progress_obj = $("#progress-bar-" + parser.hostname + '-' + parser.port);
-                            progress_obj.removeClass('progress-bar-striped');
-                            progress_obj.removeClass('progress-bar-warning');
-                            progress_obj.addClass("progress-bar-danger")
+                        }).always(function (jqXHR) {
+                            var progressColorClass = "progress-bar-warning";
+                            var port = parser.port ? parser.port : 'None';
+                            var progress_obj = document.getElementById("progress-bar-" + parser.hostname + "-" + port);
+                            if (jqXHR && progress_obj){
+                                progress_obj.classList.remove('progress-bar-striped','progress-bar-warning');
+                                if (jqXHR.status==200){
+                                    progressColorClass = ("progress-bar-success")
+                                } else{
+                                    progressColorClass = ("progress-bar-danger")
+                                }
+                                progress_obj.classList.add(progressColorClass)
+                            }
                         });
                     })(parser);
                 }
-            },
-            error: function (e) {
-                console.log(e);
             }
         });
     }
