@@ -62,6 +62,9 @@
         });
     }
 
-    window.onload = get_servers_state
+    window.onload = function (){
+        get_servers_state();
+        setInterval(get_servers_state, 1000 * 10);
+    }
  </script>
 {% endblock %}
