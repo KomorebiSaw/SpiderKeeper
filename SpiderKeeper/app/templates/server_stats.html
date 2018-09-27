@@ -69,32 +69,35 @@
     <!-- /.modal-dialog -->
 </div>
 
- <script type="text/javascript">
+<script type="text/javascript">
     function get_servers_state() {
-        $.ajax({
-            type: 'GET',
-            url: '/api/projects/get_server_list',
-            async: true,
-            success: function (servers) {
+        fetch('/api/projects/get_server_list')
+            .then(response => {
+                if (response.ok) {
+                    return response.json()
+                }
+            })
+            .then(servers => {
                 for (let server of servers) {
-                    let parser = document.createElement('a');
+                    const parser = document.createElement('a');
                     parser.href = server;
-                    !(function(parser){
+                    !(parser => {
                         $.ajax({
                             type: 'GET',
                             url: parser.href,
                             dataType: 'jsonp',
                             async: true,
                             timeout: 3000,
-                        }).always(function (jqXHR) {
+                        }).always((jqXHR, textStatus, errorThrown) => {
                             let progressColorClass = "progress-bar-warning";
-                            let port = parser.port ? parser.port : 'None';
-                            let progress_obj = document.getElementById("progress-bar-" + parser.hostname + "-" + port);
-                            if (jqXHR && progress_obj){
-                                progress_obj.classList.remove('progress-bar-striped','progress-bar-warning','progress-bar-danger','progress-bar-success');
-                                if (jqXHR.status==200){
+                            const hostname = parser.hostname ? parser.hostname : 'None';
+                            const port = parser.port ? parser.port : 'None';
+                            const progress_obj = document.getElementById("progress-bar-" + hostname + "-" + port);
+                            if (jqXHR && progress_obj) {
+                                progress_obj.classList.remove('progress-bar-striped', 'progress-bar-warning', 'progress-bar-danger', 'progress-bar-success');
+                                if (jqXHR.status == 200) {
                                     progressColorClass = ("progress-bar-success")
-                                } else{
+                                } else {
                                     progressColorClass = ("progress-bar-danger")
                                 }
                                 progress_obj.classList.add(progressColorClass)
@@ -102,13 +105,15 @@
                         });
                     })(parser);
                 }
-            }
-        });
+            })
+            .catch(e => {
+                console.log(e)
+            })
     }
 
-    window.onload = function (){
+    window.onload = () => {
         get_servers_state();
         setInterval(get_servers_state, 1000 * 10);
     }
- </script>
+</script>
 {% endblock %}
