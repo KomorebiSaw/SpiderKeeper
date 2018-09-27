@@ -16,6 +16,7 @@ from six.moves.urllib.parse import urlparse
 
 from SpiderKeeper.app import db, api, agent, app
 from SpiderKeeper.app.spider.model import JobInstance, Project, JobExecution, SpiderInstance, JobRunType
+from SpiderKeeper.app.proxy.contrib.scrapy import ScrapydProxy
 
 api_spider_bp = Blueprint('spider', __name__)
 
@@ -428,6 +429,26 @@ class GetServerList(flask_restful.Resource):
         return agent.servers
 
 
+class AddServer(flask_restful.Resource):
+    @swagger.operation(
+        summary='add new server',
+        parameters=[{
+            "name": "server",
+            "description": "server url",
+            "required": True,
+            "paramType": "form",
+            "dataType": 'string'
+        }])
+    def post(self):
+        server = request.form.get('server').strip()
+        if server and (server not in agent.servers):
+            agent.regist(ScrapydProxy(server))
+            # sync update app config
+            new_servers = app.config.get('SERVERS')
+            new_servers.append(server)
+            app.config.update(SERVERS=new_servers)
+        return redirect(request.referrer, code=302)
+
 api.add_resource(ProjectCtrl, "/api/projects")
 api.add_resource(SpiderCtrl, "/api/projects/<project_id>/spiders")
 api.add_resource(SpiderDetailCtrl, "/api/projects/<project_id>/spiders/<spider_id>")
@@ -436,6 +457,7 @@ api.add_resource(JobDetailCtrl, "/api/projects/<project_id>/jobs/<job_id>")
 api.add_resource(JobExecutionCtrl, "/api/projects/<project_id>/jobexecs")
 api.add_resource(JobExecutionDetailCtrl, "/api/projects/<project_id>/jobexecs/<job_exec_id>")
 api.add_resource(GetServerList, "/api/projects/get_server_list")
+api.add_resource(AddServer, "/api/projects/add_server")
 '''
 ========= Router =========
 '''
