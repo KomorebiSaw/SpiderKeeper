@@ -73,7 +73,7 @@
     function get_servers_state() {
         $.ajax({
             type: 'GET',
-            url: 'http://' + window.location.host + '/api/projects/get_server_list',
+            url: '/api/projects/get_server_list',
             async: true,
             success: function (servers) {
                 for (let server of servers) {
@@ -91,7 +91,7 @@
                             let port = parser.port ? parser.port : 'None';
                             let progress_obj = document.getElementById("progress-bar-" + parser.hostname + "-" + port);
                             if (jqXHR && progress_obj){
-                                progress_obj.classList.remove('progress-bar-striped','progress-bar-warning');
+                                progress_obj.classList.remove('progress-bar-striped','progress-bar-warning','progress-bar-danger','progress-bar-success');
                                 if (jqXHR.status==200){
                                     progressColorClass = ("progress-bar-success")
                                 } else{
