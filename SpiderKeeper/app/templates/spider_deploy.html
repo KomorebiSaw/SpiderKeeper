@@ -6,13 +6,19 @@
 
 {% with messages = get_flashed_messages() %}
 {% if messages %}
-<div class="callout callout-success">
-    <ul>
-        {% for message in messages %}
-        <li><h4>{{ message }}</h4></li>
-        {% endfor %}
-    </ul>
-</div>
+{% for message in messages %}
+    {% if 'success' in message %}
+        <div class="callout callout-success">
+    {% elif 'failed' in message %}
+        <div class="callout callout-danger">
+    {% else %}
+        <div class="callout callout-warning">
+    {% endif %}
+            <ul>
+                <li><h4>{{ message }}</h4></li>
+            </ul>
+        </div>
+{% endfor %}
 {% endif %}
 {% endwith %}
 

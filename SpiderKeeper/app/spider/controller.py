@@ -680,7 +680,10 @@ def spider_egg_upload(project_id):
         dst = os.path.join(tempfile.gettempdir(), filename)
         file.save(dst)
         agent.deploy(project, dst)
-        flash('deploy success!')
+        if agent.deploy(project, dst):
+            flash('deploy success!')
+        else:
+            flash('deploy failed!')
     return redirect(request.referrer)
 
 
