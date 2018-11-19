@@ -12,6 +12,8 @@ A scalable admin ui for spider service
 - With a single click deploy the scrapy project
 - Show spider running stats
 - Provide api
+- **NEW!** Show scrapyd server connection status
+- **NEW!** Add scrapyd server on web page
 
 
 Current Support spider service
@@ -21,6 +23,8 @@ Current Support spider service
 ![job dashboard](https://raw.githubusercontent.com/DormyMo/SpiderKeeper/master/screenshot/screenshot_1.png)
 ![periodic job](https://raw.githubusercontent.com/DormyMo/SpiderKeeper/master/screenshot/screenshot_2.png)
 ![running stats](https://raw.githubusercontent.com/DormyMo/SpiderKeeper/master/screenshot/screenshot_3.png)
+![running stats](https://raw.githubusercontent.com/zhangyucha0/SpiderKeeper/master/screenshot/screenshot_4.png)
+![running stats](https://raw.githubusercontent.com/zhangyucha0/SpiderKeeper/master/screenshot/screenshot_5.png)
 
 ## Getting Started
 
